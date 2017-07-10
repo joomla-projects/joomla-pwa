@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <field name="src" type="media" directory=""
+           label="PLG_SYSTEM_PWA_FIELD_ICON_SRC_LABEL" description="PLG_SYSTEM_PWA_FIELD_ICON_SRC_DESC"/>
+    <field name="size" type="checkboxes"
+           label="PLG_SYSTEM_PWA_FIELD_ICON_SIZE_LABEL" description="PLG_SYSTEM_PWA_FIELD_ICON_SIZE_DESC" >
+        <option value="48x48">48x48</option>
+        <option value="64x64">64x64</option>
+        <option value="128x128">128x128</option>
+        <option value="256x256">256x256</option>
+    </field>
+    <field name="type" type="checkboxes"
+           label="PLG_SYSTEM_PWA_FIELD_ICON_TYPE_LABEL" description="PLG_SYSTEM_PWA_FIELD_ICON_TYPE_DESC" >
+        <option value="none">None</option>
+        <option value="image/webp">image/webp</option>
+    </field>
+</form>

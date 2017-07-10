@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="4.0" type="plugin" group="system" method="upgrade">
+	<name>plg_system_pwa</name>
+	<author>Philip Walton</author>
+	<creationDate>June 2016</creationDate>
+	<copyright>Copyright (C) 2016. All rights reserved.</copyright>
+	<license>GNU General Public License version 3 or later</license>
+	<authorEmail>phil@softforge.co.uk</authorEmail>
+	<authorUrl>www.softforge.co.uk</authorUrl>
+	<version>0.0.1</version>
+	<description>PLG_SYSTEM_PWA_DESCRIPTION</description>
+
+	<files>
+		<filename plugin="pwa">pwa.php</filename>
+		<filename>index.html</filename>
+		<filename>icons.xml</filename>
+	</files>
+
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_system_pwa.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_system_pwa.sys.ini</language>
+	</languages>
+
+	<config>
+	    <fields name="params">
+		    <fieldset name="basic">
+				<field
+					name="name_of_file" type="text"
+					default="manifest.json"
+					label="PLG_SYSTEM_PWA_FIELD_NAME_OF_FILE_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_NAME_OF_FILE_DESC"
+				/>
+				<field
+					name="dir"
+					type="text"
+					default="ltr"
+					label="PLG_SYSTEM_PWA_FIELD_DIR_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_DIR_DESC"
+				>
+					<option value="ltr">Left-to-right text</option>
+					<option value="rtl">Right-to-left text</option>
+					<option value="auto">auto</option>
+				</field>
+
+				<field
+					name="lang"
+					type="list" default="en"
+					label="PLG_SYSTEM_PWA_FIELD_LANG_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_LANG_DESC"
+				>
+					<option value="en-GB">en-GB</option>
+					<option value="de">de</option>
+					<option value="fr">fr</option>
+				</field>
+				<field
+					name="name"
+					type="text"
+					default="Full Name of Application"
+					label="PLG_SYSTEM_PWA_FIELD_NAME_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_NAME_DESC"
+				/>
+
+				<field
+					name="short_name"
+					type="text"
+					default="Short Name"
+					label="PLG_SYSTEM_PWA_FIELD_SHORT_NAME_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_SHORT_NAME_DESC"
+				/>
+
+				<field
+					name="description"
+					type="text"
+					default="Description of Application"
+					label="PLG_SYSTEM_PWA_FIELD_DESCRIPTION_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_DESCRIPTION_DESC"
+				/>
+
+				<field
+					name="scope"
+					type="text"
+					default="The context of the app  "
+					label="PLG_SYSTEM_PWA_FIELD_SCOPE_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_SCOPE_DESC"
+				/>
+
+				<field
+					name="icons" type="subform"
+					formsource="plugins/system/pwa/icons.xml"
+					multiple="true"
+					label="PLG_SYSTEM_PWA_FIELD_ICON_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_ICON_DESC"
+				/>
+
+				<field
+					name="display"
+					type="list"
+					default="standalone"
+					label="PLG_SYSTEM_PWA_FIELD_DISPLAY_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_DISPLAY_DESC"
+				>
+					<option value="fullscreen">Fullscreen</option>
+					<option value="standalone">Standalone</option>
+					<option value="minimal-ui">Minimal-ui</option>
+					<option value="browser">Browser</option>
+				</field>
+
+				<field name="orientation"
+					type="list"
+					default="standalone"
+					label="PLG_SYSTEM_PWA_FIELD_ORIENTATION_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_ORIENTATION_DESC">
+					<option value="any">Any</option>
+					<option value="natural">Natural</option>
+					<option value="landscape">Landscape</option>
+					<option value="portrait">Portrait</option>
+				</field>
+
+				<field
+					name="start_url"
+					type="text"
+					default=""
+					label="PLG_SYSTEM_PWA_FIELD_START_URL_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_START_URL_DESC"
+				/>
+
+				<field
+					name="themecolor"
+					type="color"
+					default="#ddd"
+					label="PLG_SYSTEM_PWA_FIELD_THEME_COLOUR_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_THEME_COLOUR_DESC"
+				/>
+
+				<field
+					name="related_applications"
+					type="text"
+					default=""
+					label="PLG_SYSTEM_PWA_FIELD_RELATED_APPLICATIONS_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_RELATED_APPLICATIONS_DESC"
+				/>
+
+				<field name="prefer_related_applications"
+					type="list"
+					default="false"
+					label="PLG_SYSTEM_PWA_FIELD_PREFER_RELATED_APPLICATIONS_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_PREFER_RELATED_APPLICATIONS_DESC"
+				>
+					<option value="true">JTRUE</option>
+					<option value="false">JFALSE</option>
+				</field>
+
+				<field
+					name="backgroundcolor"
+					type="color"
+					default="#eee"
+					label="PLG_SYSTEM_PWA_FIELD_BACKGROUND_COLOUR_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_BACKGROUND_COLOUR_DESC"
+				/>
+
+				<field
+					name="includeserviceworkers"
+					type="list"
+					default="no"
+					label="PLG_SYSTEM_PWA_FIELD_INCLUDE_SERVICE_WORKERS_LABEL"
+					description="PLG_SYSTEM_PWA_FIELD_INCLUDE_SERVICE_WORKERS_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>
