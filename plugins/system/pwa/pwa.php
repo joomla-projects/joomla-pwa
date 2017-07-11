@@ -294,191 +294,91 @@ class PlgSystemPwa extends CMSPlugin
         $prefer_related_applications = $params->get('prefer_related_applications', 'false');
         $backgroundcolor = $params->get('backgroundcolor');
 
-        $commas = 0;
-        $manifestContents = '{
-    ';
+        $manifestItems = [];
 
-        if ($lang != "")
+        if (!empty($lang))
         {
-            $manifestContents .= '"lang": "' . $lang . '"';
-            $commas++;
+	        $manifestItems['lang'] = $lang;
         }
 
-        if ($dir != "")
+        if (!empty($dir))
         {
-            if ($commas > 0)
-            {
-                $manifestContents .= ',
-    ';
-            }
-            $manifestContents .= '"dir": "' . $dir . '"';
-            $commas++;
+        	$manifestItems['dir'] = $dir;
         }
 
-        if ($name != "")
+        if (!empty($name))
         {
-            if ($commas > 0) {
-                $manifestContents .= ',
-    ';
-            }
-            $manifestContents .= '"name": "' . $name . '"';
-            $commas++;
+        	$manifestItems['name'] = $name;
         }
 
-        if ($short_name != "")
-        {
-            if ($commas > 0)
-            {
-                $manifestContents .= ',
-    ';
-            }
+	    if (!empty($name))
+	    {
+		    $manifestItems['short_name'] = $short_name;
+	    }
 
-            $manifestContents .= '"short_name": "' . $short_name . '"';
-            $commas++;
-        }
+	    if (!empty($description))
+	    {
+		    $manifestItems['description'] = $description;
+	    }
 
-        if ($description != "")
-        {
-            if ($commas > 0)
-            {
-                $manifestContents .= ',
-    ';
-            }
+	    if (!empty($scope))
+	    {
+		    $manifestItems['scope'] = $scope;
+	    }
 
-            $manifestContents .= '"description": "' . $description . '"';
-            $commas++;
-        }
+	    if (!empty($icons))
+	    {
+		    $manifestItems['icons'] = [];
 
-        if ($scope != "") {
-            if ($commas > 0) {
-                $manifestContents .= ',
-    ';
-            }
-            $manifestContents .= '"scope": "' . $scope . '"';
-            $commas++;
-        }
+		    foreach($icons as $icon)
+		    {
+			    $manifestIcon = [
+				    'src' => $icon->src,
+				    'sizes' => $icon->size[0],
+				    'type' => $icon->type[0] . count($icons)
+			    ];
 
-        if ($icons != "")
-        {
-            if ($commas > 0) {
-                $manifestContents .= ',
-    ';
-            }
-            $manifestContents .= '"icons": [
-	{
-	';
-            $iconcount = 0;
+			    $manifestItems['icons'][] = $manifestIcon;
+		    }
+	    }
 
-            foreach ($icons as $icon)
-            {
-                if ($iconcount > 0)
-                {
-                    $manifestContents .= '
-	},{
-	';
-                }
+	    if (!empty($display))
+	    {
+		    $manifestItems['display'] = $display;
+	    }
 
-                $manifestContents .=
-                    '"src": "' . $icon->src . '",
-	"sizes": "' . $icon->size[0] . '",
-	"type": "' . $icon->type[0] . count($icons) . '"';
-                $iconcount++;
-            }
+	    if (!empty($orientation))
+	    {
+		    $manifestItems['orientation'] = $orientation;
+	    }
 
-            $manifestContents .= '
-	}]';
-            $commas++;
-        }
+	    if (!empty($start_url))
+	    {
+		    $manifestItems['start_url'] = $start_url;
+	    }
 
-        if ($display != "")
-        {
-            if ($commas > 0)
-            {
-                $manifestContents .= ',
-    ';
-            }
+	    if (!empty($themecolor))
+	    {
+		    $manifestItems['theme_color'] = $themecolor;
+	    }
 
-            $manifestContents .= '"display": "' . $display . '"';
-            $commas++;
-        }
+	    if (!empty($related_applications))
+	    {
+		    $manifestItems['related_applications'] = $related_applications;
+	    }
 
-        if ($orientation != "")
-        {
-            if ($commas > 0)
-            {
-                $manifestContents .= ',
-    ';
-            }
+	    if (!empty($prefer_related_applications))
+	    {
+		    $manifestItems['prefer_related_applications'] = $prefer_related_applications;
+	    }
 
-            $manifestContents .= '"orientation": "' . $orientation . '"';
-            $commas++;
-        }
-
-        if ($start_url != "")
-        {
-            if ($commas > 0)
-            {
-                $manifestContents .= ',
-    ';
-            }
-
-            $manifestContents .= '"start_url": "' . $start_url . '"';
-            $commas++;
-        }
-
-        if ($themecolor != "")
-        {
-            if ($commas > 0)
-            {
-                $manifestContents .= ',
-    ';
-            }
-
-            $manifestContents .= '"theme_color": "' . $themecolor . '"';
-            $commas++;
-        }
-
-        if ($related_applications != "")
-        {
-            if ($commas > 0)
-            {
-                $manifestContents .= ',
-    ';
-            }
-
-            $manifestContents .= '"related_applications": "' . $related_applications . '"';
-            $commas++;
-        }
-
-        if ($prefer_related_applications != "")
-        {
-            if ($commas > 0)
-            {
-                $manifestContents .= ',
-    ';
-            }
-
-            $manifestContents .= '"prefer_related_applications": ' . $prefer_related_applications;
-            $commas++;
-        }
-
-        if ($backgroundcolor != "")
-        {
-            if ($commas > 0)
-            {
-                $manifestContents .= ',
-    ';
-            }
-
-            $manifestContents .= '"background_color": "' . $backgroundcolor . '"';
-            $commas++;
-        }
-
-        $manifestContents .= '
-}';
+	    if (!empty($backgroundcolor))
+	    {
+		    $manifestItems['background_color'] = $backgroundcolor;
+	    }
 
 	    $fileManifestWrite = JPATH_ROOT . "/" . $name_of_file;
-	    JFile::write($fileManifestWrite, $manifestContents);
+	    JFile::write($fileManifestWrite, json_encode($manifestItems));
     }
 
 	/**
