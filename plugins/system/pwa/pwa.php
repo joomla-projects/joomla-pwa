@@ -209,6 +209,16 @@ class PlgSystemPwa extends CMSPlugin
         }
     }
 
+	/**
+	 * Removes the manifests if our plugin is uninstalled or updates the server manifest if
+	 * a service plugin is uninstalled
+	 *
+	 * @param   array  $pk  The id of the extension that is being uninstalled
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
     public function onExtensionBeforeUninstall($pk)
     {
         /** @var Extension $extensionTable */
@@ -227,6 +237,17 @@ class PlgSystemPwa extends CMSPlugin
         }
     }
 
+	/**
+	 * Updates the manifests if our plugin is updated or updates the server manifest if
+	 * a service plugin is updated
+	 *
+	 * @param   array  $installer  The reference to the installer object
+	 * @param   array  $pk         The id of the extension that is being uninstalled
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
     public function onExtensionAfterUpdate($installer, $pk)
     {
         /** @var Extension $extensionTable */
@@ -245,6 +266,16 @@ class PlgSystemPwa extends CMSPlugin
         }
     }
 
+	/**
+	 * Builds the manifest file from a given set of parameters
+	 *
+	 * @param   Registry  $params  The parameters used to build the manifest file (note this isn't always the active
+	 *                             parameters (e.g. on saving the manifest plugin the new parameters aren't saved)
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
     protected function buildManifestFile(Registry $params)
     {
         $name_of_file = $params->get('name_of_file', 'manifest.json');
