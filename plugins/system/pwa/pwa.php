@@ -18,6 +18,8 @@ use Joomla\CMS\Table\Extension;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
+JLoader::register('JFile',  JPATH_PLATFORM . '/joomla/filesystem/file.php');
+
 /**
  * Class PlgSystemPwa
  *
@@ -168,11 +170,11 @@ class PlgSystemPwa extends CMSPlugin
 	 */
     public function onExtensionAfterSave($context, $table, $isNew)
     {
-        if ($context == 'com_plugins.plugin')
+        if ($context === 'com_plugins.plugin')
         {
             $result = $table->name;
 
-            if ($result == "plg_system_pwa")
+            if ($result === 'plg_system_pwa')
             {
                 $publishedStatus = $table->enabled;
                 $newParams = json_decode($table->params, true);
@@ -185,7 +187,8 @@ class PlgSystemPwa extends CMSPlugin
 
                 $newParams = new Registry($newParams);
 
-                if ($publishedStatus === 1)
+	            // This is stored as a string(!?) so do a weak comparison here
+                if ($publishedStatus == 1)
                 {
                     $this->buildManifestFile($newParams);
                 }
@@ -195,9 +198,9 @@ class PlgSystemPwa extends CMSPlugin
                     $this->deleteServerWorkerManifestFile();
                 }
 
-                $includeserviceworkers = $newParams->get('includeserviceworkers', '0');
+                $includeServiceWorkers = $newParams->get('includeserviceworkers', '0');
 
-                if ($includeserviceworkers && $publishedStatus == 1)
+                if ($includeServiceWorkers && $publishedStatus == 1)
                 {
                     $this->createServiceWorkerManifest($newParams);
                 }
@@ -291,7 +294,7 @@ class PlgSystemPwa extends CMSPlugin
         $start_url = $params->get('start_url', '/');
         $themecolor = $params->get('themecolor', '#eee');
         $related_applications = $params->get('related_applications', '');
-        $prefer_related_applications = $params->get('prefer_related_applications', 'false');
+        $prefer_related_applications = $params->get('prefer_related_applications', "false");
         $backgroundcolor = $params->get('backgroundcolor');
 
         $manifestItems = [];
@@ -369,7 +372,7 @@ class PlgSystemPwa extends CMSPlugin
 
 	    if (!empty($prefer_related_applications))
 	    {
-		    $manifestItems['prefer_related_applications'] = $prefer_related_applications;
+		    $manifestItems['prefer_related_applications'] = filter_var($prefer_related_applications, FILTER_VALIDATE_BOOLEAN);
 	    }
 
 	    if (!empty($backgroundcolor))
