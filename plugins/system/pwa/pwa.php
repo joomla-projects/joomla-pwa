@@ -63,6 +63,7 @@ class PlgSystemPwa extends CMSPlugin
         PluginHelper::importPlugin('service-worker');
 
         // This is an array of service worker files that we need to include
+	    // TODO: What should come back here. Filename and init script?
         /** @var string[] $plugins */
         $plugins = $app->triggerEvent('onGetServiceWorkers');
 
@@ -89,24 +90,27 @@ class PlgSystemPwa extends CMSPlugin
 
             if ($includeserviceworkers && count($plugins))
             {
-                // TODO: Loop through the plugins and include each service worker
-                $replacement .= '<script>
+            	foreach ($plugins as $plugin)
+	            {
+					$replacement .= '<script>
                     if(\'serviceWorker\' in navigator) {
 	                    navigator.serviceWorker
 	                    // TODO: This file should come from the $plugin array of files
-	                    .register(\'media/plg_service-worker_cache/sw.js\')
+	                    .register(\'' . $plugin . '\')
 	                    .then(function(registration) {
-	                    //Registration Worked
-		                console.log("Service Worker Registered scope is " + registration.scope);
+		                    //Registration Worked
+			                console.log("Service Worker Registered scope is " + registration.scope);
 	                    }).catch(function(error){
-	                    // registration failed
-                    console.log(\'Registration failed with \' + error);
-	                });
-                    navigator.serviceWorker.ready.then(function(registration) {
-		            console.log("Service Worker Ready");
-	            });
-            }
-            </script>';
+		                    // registration failed
+	                        console.log(\'Registration failed with \' + error);
+	                	});
+	                    navigator.serviceWorker.ready.then(function(registration) {
+			            	console.log("Service Worker Ready");
+	            		});
+		            }
+		            </script>';
+
+	            }
             }
 
             $body = str_replace('</title>', $replacement, $body);
