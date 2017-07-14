@@ -95,7 +95,6 @@ class PlgSystemPwa extends CMSPlugin
 					$replacement .= '<script>
                     if(\'serviceWorker\' in navigator) {
 	                    navigator.serviceWorker
-	                    // TODO: This file should come from the $plugin array of files
 	                    .register(\'' . $plugin . '\')
 	                    .then(function(registration) {
 		                    //Registration Worked
