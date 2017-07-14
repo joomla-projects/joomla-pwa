@@ -42,7 +42,7 @@ class PlgSystemPwa extends CMSPlugin
      *
      * @since  __DEPLOY_VERSION__
      */
-    public function onAfterRender()
+    public function onBeforeRender()
     {
     	// This is only for web interfaces so if we're on a CLI environment just bail here
     	if ($this->app->isCli())
@@ -52,68 +52,64 @@ class PlgSystemPwa extends CMSPlugin
 
 	    /** @var CMSApplication $app */
 	    $app = $this->app;
+	    $doc = $app->getDocument();
 
 	    // If we aren't displaying a HTML page, let's also not insert the information onto the page.
-	    if ($app->getDocument()->getType() !== 'html')
+	    if ($doc->getType() !== 'html')
 	    {
 	    	return;
 	    }
 
-        // Import service worker plugin group
-        PluginHelper::importPlugin('service-worker');
+	    /** @var $doc JDocumentHtml */
 
-        // This is an array of service worker files that we need to include
-	    // TODO: What should come back here. Filename and init script?
-        /** @var string[] $plugins */
-        $plugins = $app->triggerEvent('onGetServiceWorkers');
-
-        // Manifest JSON
-        $body = $app->getBody();
-
-        if ($app->isClient('site'))
+        if (!$app->isClient('site'))
         {
-            $name_of_file = $this->params->get('name_of_file', 'manifest.json');
-            $short_name = $this->params->get('short_name', 'Short Name');
-            $icon1 = $this->params->get('icon1', 'icon1');
-            $icon2 = $this->params->get('icon2', 'icon2');
-            $includeserviceworkers = $this->params->get('includeserviceworkers', '0');
-            $replacement = '</title>
-            <!-- Startup configuration -->';
-            if ($start = $this->params->get('start_url', '/')) ;
-            $replacement .= '
-                <link rel="manifest" href="' . $name_of_file . '">';
-            $replacement .= '
-                <!-- Fallback application metadata for legacy browsers -->
-                <meta name="application-name" content="' . $short_name . '">
-                <link rel="icon" sizes="16x16" href="' . $icon1 . '">
-                <link rel="icon" sizes="512x512" href="' . $icon2 . '">';
+        	return;
+        }
 
-            if ($includeserviceworkers && count($plugins))
+        $name_of_file = $this->params->get('name_of_file', 'manifest.json');
+        $short_name = $this->params->get('short_name', 'Short Name');
+        $icon1 = $this->params->get('icon1', 'icon1');
+        $icon2 = $this->params->get('icon2', 'icon2');
+        $includeserviceworkers = $this->params->get('includeserviceworkers', '0');
+
+        $doc->addHeadLink($name_of_file, 'manifest');
+	    $doc->addHeadLink($icon1, 'icon', 'rel', array('sizes' => '16x16'));
+	    $doc->addHeadLink($icon2, 'icon', 'rel', array('sizes' => '512x512'));
+
+	    // Fallback application metadata for legacy browsers
+	    $doc->setMetaData('application-name', $short_name);
+
+	    // Import service worker plugin group
+	    PluginHelper::importPlugin('service-worker');
+
+	    // This is an array of service worker files that we need to include
+	    // TODO: What should come back here. Filename and init script?
+	    /** @var string[] $plugins */
+	    $plugins = $app->triggerEvent('onGetServiceWorkers');
+
+	    if ($includeserviceworkers && count($plugins))
+        {
+            foreach ($plugins as $plugin)
             {
-            	foreach ($plugins as $plugin)
-	            {
-					$replacement .= '<script>
-                    if(\'serviceWorker\' in navigator) {
-	                    navigator.serviceWorker
-	                    .register(\'' . $plugin . '\')
-	                    .then(function(registration) {
-		                    //Registration Worked
-			                console.log("Service Worker Registered scope is " + registration.scope);
-	                    }).catch(function(error){
-		                    // registration failed
-	                        console.log(\'Registration failed with \' + error);
-	                	});
-	                    navigator.serviceWorker.ready.then(function(registration) {
-			            	console.log("Service Worker Ready");
-	            		});
-		            }
-		            </script>';
-
+				$doc->addScriptDeclaration('
+                if(\'serviceWorker\' in navigator) {
+                    navigator.serviceWorker
+                    .register(\'' . $plugin . '\')
+                    .then(function(registration) {
+	                    //Registration Worked
+		                console.log("Service Worker Registered scope is " + registration.scope);
+                    }).catch(function(error){
+	                    // registration failed
+                        console.log(\'Registration failed with \' + error);
+                    });
+                    navigator.serviceWorker.ready.then(function(registration) {
+		                console.log("Service Worker Ready");
+                    });
 	            }
-            }
+	            ');
 
-            $body = str_replace('</title>', $replacement, $body);
-            $app->setBody($body);
+            }
         }
     }
 
