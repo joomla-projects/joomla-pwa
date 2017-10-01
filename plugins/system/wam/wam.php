@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Joomla.Plugin
- * @subpackage  System.pwa
+ * @subpackage  System.wam
  *
  * @copyright   Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -101,11 +101,11 @@ class PlgSystemWam extends CMSPlugin
 				$extensionTable->reset();
 				$extensionTable->load($pk);
 
-				if ($extensionTable->name === 'plg_system_pwa' && $value === 1)
+				if ($extensionTable->name === 'plg_system_wam' && $value === 1)
 				{
 					$this->buildManifestFile($this->params);
 				}
-				else if ($extensionTable->name === 'plg_system_pwa' && $value === 0)
+				else if ($extensionTable->name === 'plg_system_wam' && $value === 0)
 				{
 					$this->deleteManifestFile($this->params->get('name_of_file', 'manifest.json'));
 				}
@@ -132,7 +132,7 @@ class PlgSystemWam extends CMSPlugin
 		{
 			$result = $table->name;
 
-			if ($result === 'plg_system_pwa')
+			if ($result === 'plg_system_wam')
 			{
 				$publishedStatus = $table->enabled;
 				$newParams = json_decode($table->params, true);
@@ -175,7 +175,7 @@ class PlgSystemWam extends CMSPlugin
 		$extensionTable->reset();
 		$extensionTable->load($pk);
 
-		if ($extensionTable->name === 'plg_system_pwa')
+		if ($extensionTable->name === 'plg_system_wam')
 		{
 			$this->deleteManifestFile($this->params->get('name_of_file', 'manifest.json'));
 		}
@@ -199,7 +199,7 @@ class PlgSystemWam extends CMSPlugin
 		$extensionTable->reset();
 		$extensionTable->load($pk);
 
-		if ($extensionTable->name === 'plg_system_pwa')
+		if ($extensionTable->name === 'plg_system_wam')
 		{
 			$this->buildManifestFile($this->params);
 		}
