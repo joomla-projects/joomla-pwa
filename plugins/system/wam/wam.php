@@ -12,10 +12,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Table\Extension;
-use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
 JLoader::register('JFile',  JPATH_PLATFORM . '/joomla/filesystem/file.php');
@@ -71,7 +69,6 @@ class PlgSystemPwa extends CMSPlugin
 		$short_name = $this->params->get('short_name', 'Short Name');
 		$icon1 = $this->params->get('icon1', 'icon1');
 		$icon2 = $this->params->get('icon2', 'icon2');
-		$includeserviceworkers = $this->params->get('includeserviceworkers', '0');
 
 		$doc->addHeadLink($name_of_file, 'manifest');
 		$doc->addHeadLink($icon1, 'icon', 'rel', array('sizes' => '16x16'));
@@ -79,38 +76,6 @@ class PlgSystemPwa extends CMSPlugin
 
 		// Fallback application metadata for legacy browsers
 		$doc->setMetaData('application-name', $short_name);
-
-		// Import service worker plugin group
-		PluginHelper::importPlugin('service-worker');
-
-		// This is an array of service worker files that we need to include
-		// TODO: What should come back here. Filename and init script?
-		/** @var string[] $plugins */
-		$plugins = $app->triggerEvent('onGetServiceWorkers');
-
-		if ($includeserviceworkers && count($plugins))
-		{
-			foreach ($plugins as $plugin)
-			{
-				$doc->addScriptDeclaration('
-				if(\'serviceWorker\' in navigator) {
-					navigator.serviceWorker
-					.register(\'' . $plugin . '\')
-					.then(function(registration) {
-						//Registration Worked
-						console.log("Service Worker Registered scope is " + registration.scope);
-					}).catch(function(error){
-						// registration failed
-						console.log(\'Registration failed with \' + error);
-					});
-					navigator.serviceWorker.ready.then(function(registration) {
-						console.log("Service Worker Ready");
-					});
-				}
-				');
-
-			}
-		}
 	}
 
 	/**
@@ -139,16 +104,10 @@ class PlgSystemPwa extends CMSPlugin
 				if ($extensionTable->name === 'plg_system_pwa' && $value === 1)
 				{
 					$this->buildManifestFile($this->params);
-					$this->createServiceWorkerManifest($this->params);
 				}
 				else if ($extensionTable->name === 'plg_system_pwa' && $value === 0)
 				{
 					$this->deleteManifestFile($this->params->get('name_of_file', 'manifest.json'));
-					$this->deleteServerWorkerManifestFile();
-				}
-				else if ($extensionTable->folder === 'service-worker')
-				{
-					$this->createServiceWorkerManifest($this->params);
 				}
 			}
 		}
@@ -194,19 +153,7 @@ class PlgSystemPwa extends CMSPlugin
 				else
 				{
 					$this->deleteManifestFile($newParams->get('name_of_file', 'manifest.json'));
-					$this->deleteServerWorkerManifestFile();
 				}
-
-				$includeServiceWorkers = $newParams->get('includeserviceworkers', '0');
-
-				if ($includeServiceWorkers && $publishedStatus == 1)
-				{
-					$this->createServiceWorkerManifest($newParams);
-				}
-			}
-			elseif ($table->folder === 'service-worker')
-			{
-				$this->createServiceWorkerManifest($this->params);
 			}
 		}
 	}
@@ -231,11 +178,6 @@ class PlgSystemPwa extends CMSPlugin
 		if ($extensionTable->name === 'plg_system_pwa')
 		{
 			$this->deleteManifestFile($this->params->get('name_of_file', 'manifest.json'));
-			$this->deleteServerWorkerManifestFile();
-		}
-		else if ($extensionTable->folder === 'service-worker')
-		{
-			$this->createServiceWorkerManifest($this->params);
 		}
 	}
 
@@ -260,11 +202,6 @@ class PlgSystemPwa extends CMSPlugin
 		if ($extensionTable->name === 'plg_system_pwa')
 		{
 			$this->buildManifestFile($this->params);
-			$this->createServiceWorkerManifest($this->params);
-		}
-		else if ($extensionTable->folder === 'service-worker')
-		{
-			$this->createServiceWorkerManifest($this->params);
 		}
 	}
 
@@ -395,60 +332,5 @@ class PlgSystemPwa extends CMSPlugin
 	protected function deleteManifestFile($fileName)
 	{
 		JFile::delete(JPATH_ROOT . '/' . $fileName);
-	}
-
-	/**
-	 * Creates the service worker manifest file
-	 *
-	 * @param   string  $fileName  The filename to delete
-	 *
-	 * @return  void
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	public function createServiceWorkerManifest(Registry $params)
-	{
-		$root = Uri::root();
-		$host = Uri::getInstance($root)->getHost();
-
-		$javascriptContents = 'self.addEventListener(\'install\', function(event) {
-	event.waitUntil(
-		caches.open(\'' . $host . '\').then(function(cache) {
-			return cache.addAll([
-				\'' . $params->get('start_url', '/') . '\'
-						  ]).then(function() {
-				return self.skipWaiting();
-			});
-		})
-	);
-});
-
-self.addEventListener(\'activate\', function(event) {
-	event.waitUntil(self.clients.claim());
-});
-
-self.addEventListener(\'fetch\', function(event) {
-	console.log(event.request.url);
-
-	event.respondWith(
-		caches.match(event.request).then(function(response) {
-			return response || fetch(event.request);
-		})
-	);
-});';
-
-		JFile::write(JPATH_ROOT . "/serviceWorker.js", $javascriptContents);
-	}
-
-	/**
-	 * Deletes the service worker manifest file from the filesystem
-	 *
-	 * @return  void
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	protected function deleteServerWorkerManifestFile()
-	{
-		JFile::delete(JPATH_ROOT . '/serviceWorker.js');
 	}
 }
