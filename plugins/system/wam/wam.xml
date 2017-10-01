@@ -87,7 +87,7 @@
 
 				<field
 					name="icons" type="subform"
-					formsource="plugins/system/pwa/icons.xml"
+					formsource="plugins/system/wam/icons.xml"
 					multiple="true"
 					label="PLG_SYSTEM_WAM_FIELD_ICON_LABEL"
 					description="PLG_SYSTEM_WAM_FIELD_ICON_DESC"
