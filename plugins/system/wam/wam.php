@@ -23,7 +23,7 @@ JLoader::register('JFile',  JPATH_PLATFORM . '/joomla/filesystem/file.php');
  *
  * @since  __DEPLOY_VERSION__
  */
-class PlgSystemPwa extends CMSPlugin
+class PlgSystemWam extends CMSPlugin
 {
 	/**
 	 * Application object.
