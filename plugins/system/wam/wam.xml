@@ -25,7 +25,8 @@
 	    <fields name="params">
 		    <fieldset name="basic">
 				<field
-					name="name_of_file" type="text"
+					name="name_of_file"
+					type="text"
 					default="manifest.json"
 					label="PLG_SYSTEM_WAM_FIELD_NAME_OF_FILE_LABEL"
 					description="PLG_SYSTEM_WAM_FIELD_NAME_OF_FILE_DESC"
