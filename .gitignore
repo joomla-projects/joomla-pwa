@@ -21,6 +21,7 @@
 /.php_cs
 /.php_cs.cache
 /media
+/manifest.json
 
 # Test Related Files #
 /phpunit.xml
