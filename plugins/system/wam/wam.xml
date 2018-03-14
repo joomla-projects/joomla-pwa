@@ -108,7 +108,7 @@
 
 				<field name="orientation"
 					type="list"
-					default="standalone"
+					default="any"
 					label="PLG_SYSTEM_WAM_FIELD_ORIENTATION_LABEL"
 					description="PLG_SYSTEM_WAM_FIELD_ORIENTATION_DESC">
 					<option value="any">Any</option>
